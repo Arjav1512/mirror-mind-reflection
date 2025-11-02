@@ -50,15 +50,15 @@ const WeeklySummary = ({ userId }: WeeklySummaryProps) => {
       });
 
       if (error) {
-        // Handle "no entries" case gracefully
-        if (error.message?.includes("No entries found")) {
-          toast({
-            title: "Not enough data yet",
-            description: "Keep journaling this week! You need at least one entry to generate a summary.",
-          });
-        } else {
-          throw error;
-        }
+        throw error;
+      }
+
+      if (data?.error) {
+        // Check if it's a "no entries" message (status 200 with error in body)
+        toast({
+          title: "Not enough data yet",
+          description: data.error,
+        });
       } else {
         toast({
           title: "Summary generated!",
@@ -114,10 +114,10 @@ const WeeklySummary = ({ userId }: WeeklySummaryProps) => {
       {!summary ? (
         <div className="space-y-3">
           <p className="text-sm text-muted-foreground">
-            Generate your first weekly summary to see AI-powered insights about your emotional patterns.
+            Generate your weekly summary to see AI-powered insights about your emotional patterns.
           </p>
           <p className="text-xs text-muted-foreground italic">
-            Note: Weekly summaries are generated for the previous week. Make sure you have at least one journal entry from last week to generate a summary.
+            The summary will be generated from your journal entries. For new users, it will use entries from the current week.
           </p>
         </div>
       ) : (

@@ -10,7 +10,7 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    const { weekStart, weekEnd } = await req.json();
+    let { weekStart, weekEnd } = await req.json();
     
     if (!weekStart || !weekEnd) {
       return new Response(
@@ -44,7 +44,7 @@ serve(async (req) => {
 
     console.log(`Generating weekly summary for ${user.id} from ${weekStart} to ${weekEnd}`);
 
-    // Fetch entries for the week
+    // Fetch entries for the specified week
     const { data: entries, error: entriesError } = await supabase
       .from('journal_entries')
       .select('content, created_at')
@@ -61,11 +61,47 @@ serve(async (req) => {
       );
     }
 
+    // If no entries found for the requested week, try current week for new users
     if (!entries || entries.length === 0) {
-      return new Response(
-        JSON.stringify({ error: "No entries found for this week" }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      console.log("No entries found for last week, checking current week...");
+      
+      const currentWeekStart = new Date();
+      currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay());
+      currentWeekStart.setHours(0, 0, 0, 0);
+      
+      const currentWeekEnd = new Date(currentWeekStart);
+      currentWeekEnd.setDate(currentWeekEnd.getDate() + 6);
+      currentWeekEnd.setHours(23, 59, 59, 999);
+
+      const { data: currentEntries, error: currentError } = await supabase
+        .from('journal_entries')
+        .select('content, created_at')
+        .gte('created_at', currentWeekStart.toISOString())
+        .lte('created_at', currentWeekEnd.toISOString())
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true });
+
+      if (currentError) {
+        console.error("Error fetching current week entries:", currentError);
+        return new Response(
+          JSON.stringify({ error: "Failed to fetch entries" }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (!currentEntries || currentEntries.length === 0) {
+        return new Response(
+          JSON.stringify({ error: "No entries found. Create at least one journal entry to generate a summary." }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Use current week's entries and dates
+      entries.push(...currentEntries);
+      weekStart = currentWeekStart.toISOString();
+      weekEnd = currentWeekEnd.toISOString();
+      
+      console.log(`Using current week instead: ${weekStart} to ${weekEnd} with ${entries.length} entries`);
     }
 
     // Fetch emotional analysis for the week
