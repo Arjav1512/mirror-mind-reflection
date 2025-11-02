@@ -81,8 +81,14 @@ const WeeklySummary = ({ userId }: WeeklySummaryProps) => {
   if (loading) {
     return (
       <div className="bg-card rounded-2xl p-6 shadow-card border border-border">
-        <h3 className="text-xl font-semibold mb-4">You in 7 Days</h3>
-        <p className="text-sm text-muted-foreground">Loading...</p>
+        <div className="flex items-center justify-between mb-4">
+          <div className="h-6 w-32 bg-accent rounded animate-pulse" />
+          <div className="h-9 w-48 bg-accent rounded animate-pulse" />
+        </div>
+        <div className="space-y-3">
+          <div className="h-16 bg-accent/50 rounded-lg animate-pulse" />
+          <div className="h-32 bg-accent/50 rounded-lg animate-pulse" />
+        </div>
       </div>
     );
   }

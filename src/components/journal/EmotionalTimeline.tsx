@@ -62,7 +62,7 @@ const EmotionalTimeline = ({ userId }: EmotionalTimelineProps) => {
     return (
       <div className="bg-card rounded-2xl p-6 shadow-card border border-border">
         <h3 className="text-xl font-semibold mb-4">Emotional Timeline</h3>
-        <p className="text-sm text-muted-foreground">Loading...</p>
+        <div className="h-[300px] bg-accent/50 rounded-lg animate-pulse" />
       </div>
     );
   }

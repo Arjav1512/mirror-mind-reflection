@@ -70,8 +70,15 @@ const BiasesList = ({ userId }: BiasesListProps) => {
   if (loading) {
     return (
       <div className="bg-card rounded-2xl p-6 shadow-card border border-border">
-        <h3 className="text-xl font-semibold mb-4">Cognitive Biases Detected</h3>
-        <p className="text-sm text-muted-foreground">Loading...</p>
+        <div className="flex items-center gap-2 mb-4">
+          <div className="h-5 w-5 bg-accent rounded animate-pulse" />
+          <div className="h-6 w-48 bg-accent rounded animate-pulse" />
+        </div>
+        <div className="space-y-4">
+          <div className="h-24 bg-accent/50 rounded-lg animate-pulse" />
+          <div className="h-24 bg-accent/50 rounded-lg animate-pulse" />
+          <div className="h-24 bg-accent/50 rounded-lg animate-pulse" />
+        </div>
       </div>
     );
   }

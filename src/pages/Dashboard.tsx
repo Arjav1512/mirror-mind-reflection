@@ -7,8 +7,10 @@ import { useToast } from "@/hooks/use-toast";
 import { LogOut } from "lucide-react";
 import JournalEntry from "@/components/journal/JournalEntry";
 import EmotionalTimeline from "@/components/journal/EmotionalTimeline";
+import EmotionalInsights from "@/components/journal/EmotionalInsights";
 import WeeklySummary from "@/components/journal/WeeklySummary";
 import BiasesList from "@/components/journal/BiasesList";
+import BiasTracker from "@/components/journal/BiasTracker";
 
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -50,8 +52,24 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+      <div className="min-h-screen bg-background">
+        <header className="border-b border-border bg-card">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+            <div className="h-8 w-32 bg-accent rounded animate-pulse" />
+          </div>
+        </header>
+        <main className="max-w-7xl mx-auto px-6 py-8">
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="h-96 bg-card rounded-2xl animate-pulse" />
+              <div className="h-80 bg-card rounded-2xl animate-pulse" />
+            </div>
+            <div className="space-y-6">
+              <div className="h-64 bg-card rounded-2xl animate-pulse" />
+              <div className="h-64 bg-card rounded-2xl animate-pulse" />
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
@@ -78,15 +96,17 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-3 gap-6">
           {/* Left Column: Journal Entry */}
-          <div className="space-y-8">
+          <div className="lg:col-span-2 space-y-6">
             <JournalEntry userId={user.id} />
+            <EmotionalTimeline userId={user.id} />
+            <BiasTracker userId={user.id} />
           </div>
 
-          {/* Right Column: Analysis & Insights */}
-          <div className="space-y-8">
-            <EmotionalTimeline userId={user.id} />
+          {/* Right Column: Insights & Analysis */}
+          <div className="space-y-6">
+            <EmotionalInsights userId={user.id} />
             <WeeklySummary userId={user.id} />
             <BiasesList userId={user.id} />
           </div>
