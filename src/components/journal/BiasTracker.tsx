@@ -37,40 +37,50 @@ const BiasTracker = ({ userId }: BiasTrackerProps) => {
   }, [userId]);
 
   const fetchBiasFrequency = async () => {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
-    const { data: biases, error } = await supabase
-      .from("cognitive_biases")
-      .select("bias_type, created_at")
-      .eq("user_id", userId)
-      .gte("created_at", thirtyDaysAgo.toISOString());
+    try {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const { data: biases, error } = await supabase
+        .from("cognitive_biases")
+        .select("bias_type, created_at")
+        .eq("user_id", userId)
+        .gte("created_at", thirtyDaysAgo.toISOString());
 
-    if (!error && biases) {
-      // Count frequency by type
-      const frequency: Record<string, number> = {};
-      biases.forEach(b => {
-        frequency[b.bias_type] = (frequency[b.bias_type] || 0) + 1;
-      });
-
-      const chartData = Object.entries(frequency).map(([type, count]) => ({
-        name: type.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-        count: count
-      })).sort((a, b) => b.count - a.count);
-
-      setData(chartData);
-
-      // Calculate improvement (comparing first half vs second half of entries)
-      if (biases.length >= 4) {
-        const midpoint = Math.floor(biases.length / 2);
-        const firstHalfCount = midpoint;
-        const secondHalfCount = biases.length - midpoint;
-        const improvementPercent = ((firstHalfCount - secondHalfCount) / firstHalfCount) * 100;
-        setImprovement(improvementPercent);
+      if (error) {
+        console.error("Error fetching biases:", error);
+        setLoading(false);
+        return;
       }
+
+      if (biases && biases.length > 0) {
+        // Count frequency by type
+        const frequency: Record<string, number> = {};
+        biases.forEach(b => {
+          frequency[b.bias_type] = (frequency[b.bias_type] || 0) + 1;
+        });
+
+        const chartData = Object.entries(frequency).map(([type, count]) => ({
+          name: type.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+          count: count
+        })).sort((a, b) => b.count - a.count);
+
+        setData(chartData);
+
+        // Calculate improvement (comparing first half vs second half of entries)
+        if (biases.length >= 4) {
+          const midpoint = Math.floor(biases.length / 2);
+          const firstHalfCount = midpoint;
+          const secondHalfCount = biases.length - midpoint;
+          const improvementPercent = ((firstHalfCount - secondHalfCount) / firstHalfCount) * 100;
+          setImprovement(improvementPercent);
+        }
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   const COLORS = ['hsl(var(--primary))', 'hsl(var(--destructive))', 'hsl(var(--accent))', 'hsl(var(--secondary))', 'hsl(var(--muted))'];

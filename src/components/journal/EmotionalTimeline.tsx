@@ -37,25 +37,35 @@ const EmotionalTimeline = ({ userId }: EmotionalTimelineProps) => {
   }, [userId]);
 
   const fetchEmotionalData = async () => {
-    const thirtyDaysAgo = subDays(new Date(), 30);
-    
-    const { data: emotions, error } = await supabase
-      .from("emotional_analysis")
-      .select("sentiment_score, created_at, dominant_emotion")
-      .eq("user_id", userId)
-      .gte("created_at", thirtyDaysAgo.toISOString())
-      .order("created_at", { ascending: true });
+    try {
+      const thirtyDaysAgo = subDays(new Date(), 30);
+      
+      const { data: emotions, error } = await supabase
+        .from("emotional_analysis")
+        .select("sentiment_score, created_at, dominant_emotion")
+        .eq("user_id", userId)
+        .gte("created_at", thirtyDaysAgo.toISOString())
+        .order("created_at", { ascending: true });
 
-    if (!error && emotions) {
-      const chartData = emotions.map((e) => ({
-        date: format(new Date(e.created_at), "MMM dd"),
-        sentiment: Number(e.sentiment_score),
-        emotion: e.dominant_emotion,
-      }));
-      setData(chartData);
+      if (error) {
+        console.error("Error fetching emotional data:", error);
+        setLoading(false);
+        return;
+      }
+
+      if (emotions && emotions.length > 0) {
+        const chartData = emotions.map((e) => ({
+          date: format(new Date(e.created_at), "MMM dd"),
+          sentiment: Number(e.sentiment_score),
+          emotion: e.dominant_emotion,
+        }));
+        setData(chartData);
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   if (loading) {

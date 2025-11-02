@@ -36,17 +36,28 @@ const EmotionalInsights = ({ userId }: EmotionalInsightsProps) => {
   }, [userId]);
 
   const fetchInsights = async () => {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
-    const { data: emotions, error } = await supabase
-      .from("emotional_analysis")
-      .select("sentiment_score, created_at")
-      .eq("user_id", userId)
-      .gte("created_at", thirtyDaysAgo.toISOString())
-      .order("created_at", { ascending: true });
+    try {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const { data: emotions, error } = await supabase
+        .from("emotional_analysis")
+        .select("sentiment_score, created_at")
+        .eq("user_id", userId)
+        .gte("created_at", thirtyDaysAgo.toISOString())
+        .order("created_at", { ascending: true });
 
-    if (!error && emotions && emotions.length >= 3) {
+      if (error) {
+        console.error("Error fetching insights:", error);
+        setLoading(false);
+        return;
+      }
+
+      if (!emotions || emotions.length < 2) {
+        setLoading(false);
+        return;
+      }
+
       const scores = emotions.map(e => Number(e.sentiment_score));
       
       // Calculate rolling average (7-day window)
@@ -86,9 +97,11 @@ const EmotionalInsights = ({ userId }: EmotionalInsightsProps) => {
         recentShifts: recentShifts.slice(-3),
         totalEntries: emotions.length
       });
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   if (loading) {
@@ -108,7 +121,7 @@ const EmotionalInsights = ({ userId }: EmotionalInsightsProps) => {
       <div className="bg-card rounded-2xl p-6 shadow-card border border-border">
         <h3 className="text-xl font-semibold mb-4">Emotional Insights</h3>
         <p className="text-sm text-muted-foreground">
-          Need at least 3 entries to calculate emotional insights.
+          Need at least 2 entries to calculate emotional insights.
         </p>
       </div>
     );
