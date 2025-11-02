@@ -1,10 +1,9 @@
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowDown } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const Hero = () => {
-  const scrollToSignup = () => {
-    document.getElementById("signup")?.scrollIntoView({ behavior: "smooth" });
-  };
+  const navigate = useNavigate();
 
   return (
     <section className="gradient-hero min-h-screen flex items-center justify-center px-6 py-20 relative overflow-hidden">
@@ -23,11 +22,11 @@ const Hero = () => {
         </p>
         <Button 
           size="lg"
-          onClick={scrollToSignup}
+          onClick={() => navigate("/auth")}
           className="text-lg px-8 py-6 shadow-soft hover:shadow-lg transition-smooth group"
         >
           Get Started with Self Reflection
-          <ArrowDown className="ml-2 h-5 w-5 group-hover:translate-y-1 transition-smooth" />
+          <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-smooth" />
         </Button>
       </div>
     </section>
