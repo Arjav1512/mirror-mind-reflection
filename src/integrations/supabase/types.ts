@@ -144,21 +144,33 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age_group: string | null
           created_at: string
           email: string
+          goals: string[] | null
           id: string
+          occupation: string | null
+          onboarding_completed: boolean | null
           updated_at: string
         }
         Insert: {
+          age_group?: string | null
           created_at?: string
           email: string
+          goals?: string[] | null
           id: string
+          occupation?: string | null
+          onboarding_completed?: boolean | null
           updated_at?: string
         }
         Update: {
+          age_group?: string | null
           created_at?: string
           email?: string
+          goals?: string[] | null
           id?: string
+          occupation?: string | null
+          onboarding_completed?: boolean | null
           updated_at?: string
         }
         Relationships: []

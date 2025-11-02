@@ -26,6 +26,20 @@ const Dashboard = () => {
       
       if (!session?.user) {
         navigate("/auth");
+      } else {
+        // Check if onboarding is completed
+        setTimeout(() => {
+          supabase
+            .from("profiles")
+            .select("onboarding_completed")
+            .eq("id", session.user.id)
+            .single()
+            .then(({ data }) => {
+              if (!data?.onboarding_completed) {
+                navigate("/onboarding");
+              }
+            });
+        }, 0);
       }
     });
 
@@ -36,6 +50,18 @@ const Dashboard = () => {
       
       if (!session?.user) {
         navigate("/auth");
+      } else {
+        // Check if onboarding is completed
+        supabase
+          .from("profiles")
+          .select("onboarding_completed")
+          .eq("id", session.user.id)
+          .single()
+          .then(({ data }) => {
+            if (!data?.onboarding_completed) {
+              navigate("/onboarding");
+            }
+          });
       }
     });
 

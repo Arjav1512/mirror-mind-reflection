@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowLeft } from "lucide-react";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -18,13 +19,37 @@ const Auth = () => {
     // Check if already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate("/dashboard");
+        // Check if onboarding is completed
+        supabase
+          .from("profiles")
+          .select("onboarding_completed")
+          .eq("id", session.user.id)
+          .single()
+          .then(({ data }) => {
+            if (data?.onboarding_completed) {
+              navigate("/dashboard");
+            } else {
+              navigate("/onboarding");
+            }
+          });
       }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate("/dashboard");
+      if (event === "SIGNED_IN" && session) {
+        // Redirect to onboarding for new signups
+        supabase
+          .from("profiles")
+          .select("onboarding_completed")
+          .eq("id", session.user.id)
+          .single()
+          .then(({ data }) => {
+            if (data?.onboarding_completed) {
+              navigate("/dashboard");
+            } else {
+              navigate("/onboarding");
+            }
+          });
       }
     });
 
@@ -59,7 +84,7 @@ const Auth = () => {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`
+        emailRedirectTo: `${window.location.origin}/onboarding`
       }
     });
 
@@ -102,6 +127,18 @@ const Auth = () => {
   return (
     <div className="min-h-screen gradient-hero flex items-center justify-center px-6">
       <div className="w-full max-w-md">
+        <div className="mb-6 animate-fade-in">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate("/")}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Home
+          </Button>
+        </div>
+        
         <div className="text-center mb-8 animate-fade-in">
           <h1 className="text-4xl font-bold mb-2">Mirror</h1>
           <p className="text-muted-foreground">Your self-awareness journey begins here</p>
