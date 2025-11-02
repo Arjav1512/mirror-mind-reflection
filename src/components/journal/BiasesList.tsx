@@ -37,17 +37,28 @@ const BiasesList = ({ userId }: BiasesListProps) => {
   }, [userId]);
 
   const fetchRecentBiases = async () => {
-    const { data, error } = await supabase
-      .from("cognitive_biases")
-      .select("*")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(5);
+    try {
+      const { data, error } = await supabase
+        .from("cognitive_biases")
+        .select("id, bias_type, excerpt, explanation, confidence_score, created_at")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(5);
 
-    if (!error && data) {
-      setBiases(data);
+      if (error) {
+        console.error("Error fetching biases:", error);
+        setLoading(false);
+        return;
+      }
+
+      if (data) {
+        setBiases(data);
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const getBiasColor = (type: string) => {
@@ -111,9 +122,11 @@ const BiasesList = ({ userId }: BiasesListProps) => {
               <Badge variant={getBiasColor(bias.bias_type) as any}>
                 {formatBiasType(bias.bias_type)}
               </Badge>
-              <span className="text-xs text-muted-foreground">
-                {Math.round(bias.confidence_score * 100)}% confidence
-              </span>
+              {bias.confidence_score && (
+                <span className="text-xs text-muted-foreground">
+                  {Math.round(bias.confidence_score * 100)}% confidence
+                </span>
+              )}
             </div>
             <p className="text-sm italic text-muted-foreground mb-2">
               "{bias.excerpt}"
