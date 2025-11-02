@@ -14,7 +14,199 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cognitive_biases: {
+        Row: {
+          bias_type: string
+          confidence_score: number | null
+          created_at: string
+          entry_id: string
+          excerpt: string
+          explanation: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          bias_type: string
+          confidence_score?: number | null
+          created_at?: string
+          entry_id: string
+          excerpt: string
+          explanation: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          bias_type?: string
+          confidence_score?: number | null
+          created_at?: string
+          entry_id?: string
+          excerpt?: string
+          explanation?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cognitive_biases_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "journal_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cognitive_biases_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      emotional_analysis: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          dominant_emotion: string | null
+          emotional_valence: string
+          entry_id: string
+          id: string
+          sentiment_score: number
+          user_id: string
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          dominant_emotion?: string | null
+          emotional_valence: string
+          entry_id: string
+          id?: string
+          sentiment_score: number
+          user_id: string
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          dominant_emotion?: string | null
+          emotional_valence?: string
+          entry_id?: string
+          id?: string
+          sentiment_score?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emotional_analysis_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "journal_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emotional_analysis_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journal_entries: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_entries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      weekly_summaries: {
+        Row: {
+          behavioral_patterns: string[] | null
+          created_at: string
+          dominant_emotions: string[] | null
+          id: string
+          recurring_themes: string[] | null
+          summary: string
+          user_id: string
+          week_end: string
+          week_start: string
+        }
+        Insert: {
+          behavioral_patterns?: string[] | null
+          created_at?: string
+          dominant_emotions?: string[] | null
+          id?: string
+          recurring_themes?: string[] | null
+          summary: string
+          user_id: string
+          week_end: string
+          week_start: string
+        }
+        Update: {
+          behavioral_patterns?: string[] | null
+          created_at?: string
+          dominant_emotions?: string[] | null
+          id?: string
+          recurring_themes?: string[] | null
+          summary?: string
+          user_id?: string
+          week_end?: string
+          week_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_summaries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
