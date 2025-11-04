@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Footer = () => {
   return (
     <footer className="border-t border-border py-8 px-6">
@@ -7,26 +9,26 @@ const Footer = () => {
             © 2025 Mirror. Built for self reflection.
           </p>
           <div className="flex gap-6 text-sm">
-            <a 
-              href="#" 
+            <Link 
+              to="/privacy" 
               className="text-muted-foreground hover:text-foreground transition-smooth"
             >
               Privacy Policy
-            </a>
+            </Link>
             <span className="text-border">|</span>
-            <a 
-              href="#" 
+            <Link 
+              to="/terms" 
               className="text-muted-foreground hover:text-foreground transition-smooth"
             >
               Terms of Service
-            </a>
+            </Link>
             <span className="text-border">|</span>
-            <a 
-              href="mailto:mirror2025@gmail.com" 
+            <Link 
+              to="/contact" 
               className="text-muted-foreground hover:text-foreground transition-smooth"
             >
               Contact Us
-            </a>
+            </Link>
           </div>
         </div>
       </div>
