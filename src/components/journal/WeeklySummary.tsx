@@ -80,69 +80,91 @@ const WeeklySummary = ({ userId }: WeeklySummaryProps) => {
 
   if (loading) {
     return (
-      <div className="bg-card rounded-2xl p-6 shadow-card border border-border">
-        <div className="flex items-center justify-between mb-4">
-          <div className="h-6 w-32 bg-accent rounded animate-pulse" />
-          <div className="h-9 w-48 bg-accent rounded animate-pulse" />
+      <div className="bg-card rounded-2xl p-6 shadow-soft border border-border/50">
+        <div className="flex items-center gap-2 mb-6">
+          <Calendar className="h-5 w-5 text-primary" />
+          <div className="h-6 w-32 bg-accent/50 rounded animate-pulse" />
         </div>
-        <div className="space-y-3">
-          <div className="h-16 bg-accent/50 rounded-lg animate-pulse" />
-          <div className="h-32 bg-accent/50 rounded-lg animate-pulse" />
+        <div className="space-y-4">
+          <div className="h-10 bg-accent/30 rounded-lg animate-pulse" />
+          <div className="h-32 bg-accent/30 rounded-lg animate-pulse" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-card rounded-2xl p-6 shadow-card border border-border">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-card rounded-2xl p-6 shadow-soft border border-border/50 hover:shadow-card transition-smooth">
+      <div className="flex items-center gap-2 mb-6">
+        <Calendar className="h-5 w-5 text-primary" />
         <h3 className="text-xl font-semibold">You in 7 Days</h3>
-        <Button
-          size="sm"
-          onClick={generateSummary}
-          disabled={generating}
-          className="gap-2"
-        >
-          {generating ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Generating...
-            </>
-          ) : (
-            <>
-              <Calendar className="h-4 w-4" />
-              Generate Weekly Summary
-            </>
-          )}
-        </Button>
       </div>
 
       {!summary ? (
-        <div className="space-y-3">
-          <p className="text-sm text-muted-foreground">
-            Generate your weekly summary to see AI-powered insights about your emotional patterns.
-          </p>
-          <p className="text-xs text-muted-foreground italic">
-            The summary will be generated from your journal entries. For new users, it will use entries from the current week.
+        <div className="space-y-4">
+          <div className="text-center py-8">
+            <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-4">
+              <Calendar className="h-8 w-8 text-muted-foreground/50" />
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Generate your weekly summary to see AI-powered insights
+            </p>
+            <Button
+              onClick={generateSummary}
+              disabled={generating}
+              className="gap-2 shadow-soft"
+            >
+              {generating ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Calendar className="h-4 w-4" />
+                  Generate Summary
+                </>
+              )}
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground/70 text-center italic border-t border-border/50 pt-4">
+            Requires journal entries from this week
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4" />
-            {format(new Date(summary.week_start), "MMM dd")} - {format(new Date(summary.week_end), "MMM dd")}
+        <div className="space-y-5">
+          <div className="flex items-center justify-between pb-3 border-b border-border/50">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Calendar className="h-4 w-4" />
+              {format(new Date(summary.week_start), "MMM dd")} - {format(new Date(summary.week_end), "MMM dd")}
+            </div>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={generateSummary}
+              disabled={generating}
+              className="gap-2"
+            >
+              {generating ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <>Refresh</>
+              )}
+            </Button>
           </div>
 
-          <p className="text-sm leading-relaxed whitespace-pre-line">
-            {summary.summary}
-          </p>
+          <div className="p-4 rounded-xl bg-gradient-to-br from-accent/30 to-accent/10 border border-border/50">
+            <p className="text-sm leading-relaxed whitespace-pre-line text-card-foreground">
+              {summary.summary}
+            </p>
+          </div>
 
           {summary.dominant_emotions && summary.dominant_emotions.length > 0 && (
-            <div>
-              <p className="text-sm font-semibold mb-2">Dominant Emotions:</p>
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-card-foreground">Dominant Emotions:</p>
               <div className="flex flex-wrap gap-2">
                 {summary.dominant_emotions.map((emotion: string, i: number) => (
-                  <Badge key={i} variant="secondary">
+                  <Badge key={i} variant="secondary" className="text-xs">
                     {emotion}
                   </Badge>
                 ))}
@@ -151,9 +173,9 @@ const WeeklySummary = ({ userId }: WeeklySummaryProps) => {
           )}
 
           {summary.recurring_themes && summary.recurring_themes.length > 0 && (
-            <div>
-              <p className="text-sm font-semibold mb-2">Recurring Themes:</p>
-              <ul className="list-disc list-inside text-sm space-y-1">
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-card-foreground">Recurring Themes:</p>
+              <ul className="list-disc list-inside text-sm space-y-1 pl-2">
                 {summary.recurring_themes.map((theme: string, i: number) => (
                   <li key={i} className="text-muted-foreground">{theme}</li>
                 ))}

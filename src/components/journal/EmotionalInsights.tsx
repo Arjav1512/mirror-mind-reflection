@@ -106,11 +106,15 @@ const EmotionalInsights = ({ userId }: EmotionalInsightsProps) => {
 
   if (loading) {
     return (
-      <div className="bg-card rounded-2xl p-6 shadow-card border border-border">
-        <h3 className="text-xl font-semibold mb-4">Emotional Insights</h3>
-        <div className="space-y-3">
-          <div className="h-16 bg-accent/50 rounded-lg animate-pulse" />
-          <div className="h-16 bg-accent/50 rounded-lg animate-pulse" />
+      <div className="bg-card rounded-2xl p-6 shadow-soft border border-border/50">
+        <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
+          <Activity className="h-5 w-5 text-primary" />
+          Emotional Insights
+        </h3>
+        <div className="space-y-4">
+          <div className="h-24 bg-accent/30 rounded-xl animate-pulse" />
+          <div className="h-24 bg-accent/30 rounded-xl animate-pulse" />
+          <div className="h-24 bg-accent/30 rounded-xl animate-pulse" />
         </div>
       </div>
     );
@@ -118,77 +122,103 @@ const EmotionalInsights = ({ userId }: EmotionalInsightsProps) => {
 
   if (!insights) {
     return (
-      <div className="bg-card rounded-2xl p-6 shadow-card border border-border">
-        <h3 className="text-xl font-semibold mb-4">Emotional Insights</h3>
-        <p className="text-sm text-muted-foreground">
-          Need at least 2 entries to calculate emotional insights.
-        </p>
+      <div className="bg-card rounded-2xl p-6 shadow-soft border border-border/50">
+        <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <Activity className="h-5 w-5 text-primary" />
+          Emotional Insights
+        </h3>
+        <div className="text-center py-8">
+          <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-4">
+            <Activity className="h-8 w-8 text-muted-foreground/50" />
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Need at least 2 entries to generate insights
+          </p>
+          <p className="text-xs text-muted-foreground/70 mt-2">
+            Keep journaling to unlock emotional patterns
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-card rounded-2xl p-6 shadow-card border border-border">
-      <h3 className="text-xl font-semibold mb-4">Emotional Insights</h3>
+    <div className="bg-card rounded-2xl p-6 shadow-soft border border-border/50 hover:shadow-card transition-smooth">
+      <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
+        <Activity className="h-5 w-5 text-primary" />
+        Emotional Insights
+      </h3>
       
       <div className="space-y-4">
         {/* Rolling Average */}
-        <div className="p-4 rounded-lg bg-accent/50 border border-border">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">7-Day Average Sentiment</span>
-            <Activity className="h-4 w-4 text-primary" />
+        <div className="p-5 rounded-xl bg-gradient-to-br from-accent/40 to-accent/20 border border-border/50 hover:border-primary/30 transition-colors">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-medium text-card-foreground">7-Day Average</span>
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Activity className="h-4 w-4 text-primary" />
+            </div>
           </div>
-          <p className="text-2xl font-bold">{insights.rollingAvg}</p>
+          <p className="text-3xl font-bold text-foreground mb-1">{insights.rollingAvg}</p>
           <p className="text-xs text-muted-foreground">
-            {Number(insights.rollingAvg) > 0 ? 'Positive' : Number(insights.rollingAvg) < 0 ? 'Negative' : 'Neutral'} overall mood
+            {Number(insights.rollingAvg) > 0 ? '✨ Positive' : Number(insights.rollingAvg) < 0 ? '🌧️ Negative' : '😐 Neutral'} overall mood
           </p>
         </div>
 
         {/* Trend */}
-        <div className="p-4 rounded-lg bg-accent/50 border border-border">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Recent Trend</span>
-            {insights.trend === 'improving' ? (
-              <TrendingUp className="h-4 w-4 text-green-500" />
-            ) : insights.trend === 'declining' ? (
-              <TrendingDown className="h-4 w-4 text-red-500" />
-            ) : (
-              <Activity className="h-4 w-4 text-muted-foreground" />
-            )}
+        <div className="p-5 rounded-xl bg-gradient-to-br from-accent/40 to-accent/20 border border-border/50 hover:border-primary/30 transition-colors">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-medium text-card-foreground">Recent Trend</span>
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              {insights.trend === 'improving' ? (
+                <TrendingUp className="h-4 w-4 text-green-500" />
+              ) : insights.trend === 'declining' ? (
+                <TrendingDown className="h-4 w-4 text-red-500" />
+              ) : (
+                <Activity className="h-4 w-4 text-muted-foreground" />
+              )}
+            </div>
           </div>
-          <Badge variant={
-            insights.trend === 'improving' ? 'default' : 
-            insights.trend === 'declining' ? 'destructive' : 
-            'secondary'
-          }>
+          <Badge 
+            variant={
+              insights.trend === 'improving' ? 'default' : 
+              insights.trend === 'declining' ? 'destructive' : 
+              'secondary'
+            }
+            className="text-sm"
+          >
             {insights.trend.charAt(0).toUpperCase() + insights.trend.slice(1)}
           </Badge>
         </div>
 
         {/* Volatility */}
-        <div className="p-4 rounded-lg bg-accent/50 border border-border">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Emotional Volatility</span>
-            <AlertTriangle className="h-4 w-4 text-primary" />
+        <div className="p-5 rounded-xl bg-gradient-to-br from-accent/40 to-accent/20 border border-border/50 hover:border-primary/30 transition-colors">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-medium text-card-foreground">Volatility</span>
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <AlertTriangle className="h-4 w-4 text-primary" />
+            </div>
           </div>
           <p className="text-sm text-muted-foreground">
-            {Number(insights.volatility) < 0.3 ? 'Stable' : 
-             Number(insights.volatility) < 0.6 ? 'Moderate' : 'High'} variation (σ={insights.volatility})
+            <span className="font-semibold text-foreground">
+              {Number(insights.volatility) < 0.3 ? '🟢 Stable' : 
+               Number(insights.volatility) < 0.6 ? '🟡 Moderate' : '🔴 High'}
+            </span> emotional variation
           </p>
+          <p className="text-xs text-muted-foreground/70 mt-1">σ = {insights.volatility}</p>
         </div>
 
         {/* Significant Mood Shifts */}
         {insights.recentShifts.length > 0 && (
-          <div className="pt-4 border-t border-border">
-            <p className="text-sm font-semibold mb-2">Recent Significant Shifts:</p>
+          <div className="pt-4 border-t border-border/50">
+            <p className="text-sm font-semibold mb-3 text-card-foreground">Recent Shifts:</p>
             <div className="space-y-2">
               {insights.recentShifts.map((shift: any, i: number) => (
-                <div key={i} className="text-xs">
-                  <Badge variant={shift.type === 'improvement' ? 'default' : 'outline'} className="mr-2">
+                <div key={i} className="flex items-center gap-2 text-xs p-2 rounded-lg bg-accent/20">
+                  <Badge variant={shift.type === 'improvement' ? 'default' : 'outline'} className="text-xs">
                     {shift.date}
                   </Badge>
-                  <span className="text-muted-foreground">
-                    {shift.type === 'improvement' ? '↑' : '↓'} {Math.abs(shift.change).toFixed(2)} change
+                  <span className="text-muted-foreground flex-1">
+                    {shift.type === 'improvement' ? '📈' : '📉'} {Math.abs(shift.change).toFixed(2)} change
                   </span>
                 </div>
               ))}

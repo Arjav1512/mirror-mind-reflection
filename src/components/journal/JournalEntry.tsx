@@ -70,30 +70,51 @@ const JournalEntry = ({ userId }: JournalEntryProps) => {
   };
 
   return (
-    <div className="bg-card rounded-2xl p-6 shadow-card border border-border">
-      <h2 className="text-2xl font-semibold mb-4">Today's Entry</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Textarea
-          placeholder="How are you feeling today? What's on your mind?"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="min-h-[300px] resize-none"
-          disabled={analyzing}
-        />
-        <div className="flex justify-between items-center">
-          <p className="text-sm text-muted-foreground">
-            {content.length} characters
-          </p>
-          <Button type="submit" disabled={analyzing} className="gap-2">
+    <div className="bg-card rounded-2xl p-8 shadow-soft border border-border/50 hover:shadow-card transition-smooth">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="relative">
+          <Textarea
+            placeholder="How are you feeling today? What's on your mind?&#10;&#10;Share your thoughts, emotions, and experiences. The more you write, the better I can understand your emotional patterns and help you develop self-awareness..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="min-h-[400px] resize-none text-base leading-relaxed border-border/50 focus:border-primary transition-colors"
+            disabled={analyzing}
+          />
+          {analyzing && (
+            <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center rounded-lg">
+              <div className="text-center space-y-2">
+                <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+                <p className="text-sm text-muted-foreground">Analyzing your entry...</p>
+              </div>
+            </div>
+          )}
+        </div>
+        
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-4 border-t border-border/50">
+          <div className="space-y-1">
+            <p className="text-sm text-muted-foreground">
+              {content.length} characters
+            </p>
+            <p className="text-xs text-muted-foreground/70">
+              {content.length < 50 ? 'Write at least 50 characters for better insights' : 'Great! Ready to analyze'}
+            </p>
+          </div>
+          
+          <Button 
+            type="submit" 
+            disabled={analyzing || content.length < 10} 
+            size="lg"
+            className="gap-2 shadow-soft hover:shadow-lg transition-all w-full sm:w-auto"
+          >
             {analyzing ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-5 w-5 animate-spin" />
                 Analyzing...
               </>
             ) : (
               <>
-                <Send className="h-4 w-4" />
-                Save & Analyze
+                <Send className="h-5 w-5" />
+                Save & Analyze Entry
               </>
             )}
           </Button>
