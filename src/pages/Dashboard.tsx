@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { LogOut, PenLine, TrendingUp, Brain, Sparkles } from "lucide-react";
 import JournalEntry from "@/components/journal/JournalEntry";
+import PastEntries from "@/components/journal/PastEntries";
 import EmotionalTimeline from "@/components/journal/EmotionalTimeline";
 import EmotionalInsights from "@/components/journal/EmotionalInsights";
 import WeeklySummary from "@/components/journal/WeeklySummary";
@@ -171,16 +172,22 @@ const Dashboard = () => {
 
           {/* Write Tab - Journal Entry */}
           <TabsContent value="write" className="mt-8 space-y-0">
-            <div className="max-w-4xl mx-auto">
-              <div className="mb-6 text-center">
-                <h2 className="text-3xl font-bold text-foreground mb-2">
-                  Today's Reflection
-                </h2>
-                <p className="text-muted-foreground">
-                  Share what's on your mind and let AI help you understand your emotional patterns
-                </p>
+            <div className="grid lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+              <div className="lg:col-span-2 space-y-6">
+                <div className="mb-6 text-center lg:text-left">
+                  <h2 className="text-3xl font-bold text-foreground mb-2">
+                    Today's Reflection
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Share what's on your mind and let AI help you understand your emotional patterns
+                  </p>
+                </div>
+                <JournalEntry userId={user.id} />
               </div>
-              <JournalEntry userId={user.id} />
+              
+              <div className="space-y-6">
+                <PastEntries userId={user.id} />
+              </div>
             </div>
           </TabsContent>
 

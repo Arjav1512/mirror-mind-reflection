@@ -80,7 +80,7 @@ const Auth = () => {
       return;
     }
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -97,10 +97,18 @@ const Auth = () => {
         variant: "destructive",
       });
     } else {
-      toast({
-        title: "Welcome to Mirror!",
-        description: "Your account has been created. You can now start journaling.",
-      });
+      // Check if email confirmation is required
+      if (data?.user && !data.session) {
+        toast({
+          title: "Verification email sent!",
+          description: "Please check your email and click the verification link to complete your registration.",
+        });
+      } else {
+        toast({
+          title: "Welcome to Mirror!",
+          description: "Your account has been created. You can now start journaling.",
+        });
+      }
     }
   };
 
@@ -108,7 +116,7 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -116,11 +124,19 @@ const Auth = () => {
     setLoading(false);
 
     if (error) {
-      toast({
-        title: "Sign in failed",
-        description: error.message,
-        variant: "destructive",
-      });
+      if (error.message.includes("Email not confirmed")) {
+        toast({
+          title: "Email not verified",
+          description: "Please check your email and verify your account before signing in.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Sign in failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
     }
   };
 

@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Send } from "lucide-react";
+import { Loader2, Send, MapPin } from "lucide-react";
 
 interface JournalEntryProps {
   userId: string;
@@ -11,8 +13,35 @@ interface JournalEntryProps {
 
 const JournalEntry = ({ userId }: JournalEntryProps) => {
   const [content, setContent] = useState("");
+  const [location, setLocation] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const { toast } = useToast();
+
+  // Auto-detect location on component mount
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`
+            );
+            const data = await response.json();
+            if (data.address) {
+              const city = data.address.city || data.address.town || data.address.village || "";
+              const country = data.address.country || "";
+              setLocation(city && country ? `${city}, ${country}` : "");
+            }
+          } catch (error) {
+            console.error("Error fetching location:", error);
+          }
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+        }
+      );
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +61,7 @@ const JournalEntry = ({ userId }: JournalEntryProps) => {
       // Insert journal entry
       const { data: entry, error: entryError } = await supabase
         .from("journal_entries")
-        .insert({ user_id: userId, content })
+        .insert({ user_id: userId, content, location: location || null })
         .select()
         .single();
 
@@ -56,6 +85,7 @@ const JournalEntry = ({ userId }: JournalEntryProps) => {
           description: "Your emotional patterns and insights have been updated.",
         });
         setContent("");
+        setLocation("");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -72,6 +102,21 @@ const JournalEntry = ({ userId }: JournalEntryProps) => {
   return (
     <div className="bg-card rounded-2xl p-8 shadow-soft border border-border/50 hover:shadow-card transition-smooth">
       <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="location" className="flex items-center gap-2 text-sm font-medium">
+            <MapPin className="h-4 w-4 text-primary" />
+            Location (optional)
+          </Label>
+          <Input
+            id="location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="Where are you? (e.g., New York, Home, Coffee Shop)"
+            className="bg-background/50 border-border/50 focus:border-primary transition-colors"
+            disabled={analyzing}
+          />
+        </div>
+
         <div className="relative">
           <Textarea
             placeholder="How are you feeling today? What's on your mind?&#10;&#10;Share your thoughts, emotions, and experiences. The more you write, the better I can understand your emotional patterns and help you develop self-awareness..."
