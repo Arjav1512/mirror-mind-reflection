@@ -66,8 +66,8 @@ const PrivacyPolicy = () => {
               </h2>
               <p>
                 If you have questions about this Privacy Policy, please contact us at{" "}
-                <a href="mailto:mirror2025@gmail.com" className="text-primary hover:underline">
-                  mirror2025@gmail.com
+                <a href="mailto:arjav.jain1512@icloud.com" className="text-primary hover:underline">
+                  arjav.jain1512@icloud.com
                 </a>
               </p>
             </section>
