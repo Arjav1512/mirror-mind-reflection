@@ -97,10 +97,21 @@ const BiasesList = ({ userId }: BiasesListProps) => {
   if (biases.length === 0) {
     return (
       <div className="bg-card rounded-2xl p-6 shadow-card border border-border">
-        <h3 className="text-xl font-semibold mb-4">Cognitive Biases Detected</h3>
-        <p className="text-sm text-muted-foreground">
-          No biases detected yet. Keep journaling and Mirror will help you identify thinking patterns.
-        </p>
+        <div className="flex items-center gap-2 mb-4">
+          <AlertCircle className="h-5 w-5 text-primary" />
+          <h3 className="text-xl font-semibold">Cognitive Biases</h3>
+        </div>
+        <div className="text-center py-6">
+          <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
+            <AlertCircle className="h-6 w-6 text-muted-foreground/50" />
+          </div>
+          <p className="text-sm text-muted-foreground mb-2">
+            No biases detected in your entries yet
+          </p>
+          <p className="text-xs text-muted-foreground/70">
+            AI will analyze your thinking patterns as you journal
+          </p>
+        </div>
       </div>
     );
   }

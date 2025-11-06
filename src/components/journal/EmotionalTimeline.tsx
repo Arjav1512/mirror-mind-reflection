@@ -91,8 +91,20 @@ const EmotionalTimeline = ({ userId }: EmotionalTimelineProps) => {
   return (
     <div className="bg-card rounded-2xl p-6 shadow-card border border-border">
       <h3 className="text-xl font-semibold mb-4">Emotional Timeline</h3>
+      
+      {data.length === 1 && (
+        <div className="mb-3 p-3 rounded-lg bg-primary/10 border border-primary/20">
+          <p className="text-xs text-muted-foreground">
+            🎯 Your first data point! Keep journaling to see trends develop over time.
+          </p>
+        </div>
+      )}
+      
       <p className="text-sm text-muted-foreground mb-4">
-        Your sentiment scores over the past 30 days
+        {data.length === 1 
+          ? 'Your sentiment baseline - add more entries to track changes'
+          : `Your sentiment scores over the past 30 days (${data.length} entries)`
+        }
       </p>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
@@ -120,7 +132,7 @@ const EmotionalTimeline = ({ userId }: EmotionalTimelineProps) => {
             dataKey="sentiment"
             stroke="hsl(var(--primary))"
             strokeWidth={2}
-            dot={{ fill: "hsl(var(--primary))", r: 4 }}
+            dot={{ fill: "hsl(var(--primary))", r: data.length === 1 ? 6 : 4 }}
           />
         </LineChart>
       </ResponsiveContainer>
