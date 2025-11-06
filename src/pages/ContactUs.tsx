@@ -37,10 +37,10 @@ const ContactUs = () => {
                     We'd love to hear from you! Whether you have questions, feedback, or need support, feel free to reach out.
                   </p>
                   <a 
-                    href="mailto:mirror2025@gmail.com"
+                    href="mailto:arjav.jain1512@icloud.com"
                     className="inline-flex items-center text-primary hover:underline text-lg font-medium"
                   >
-                    mirror2025@gmail.com
+                    arjav.jain1512@icloud.com
                   </a>
                 </div>
               </div>
