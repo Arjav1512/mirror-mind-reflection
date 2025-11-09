@@ -19,6 +19,7 @@ interface PastEntriesProps {
 const PastEntries = ({ userId }: PastEntriesProps) => {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedEntries, setExpandedEntries] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchEntries();
@@ -94,6 +95,18 @@ const PastEntries = ({ userId }: PastEntriesProps) => {
     );
   }
 
+  const toggleEntry = (entryId: string) => {
+    setExpandedEntries((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(entryId)) {
+        newSet.delete(entryId);
+      } else {
+        newSet.add(entryId);
+      }
+      return newSet;
+    });
+  };
+
   return (
     <Card className="p-6 bg-card border border-border/50 shadow-soft">
       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -102,28 +115,35 @@ const PastEntries = ({ userId }: PastEntriesProps) => {
       </h3>
       <ScrollArea className="h-[600px] pr-4">
         <div className="space-y-4">
-          {entries.map((entry) => (
-            <div
-              key={entry.id}
-              className="p-4 rounded-lg bg-accent/20 border border-border/30 hover:border-primary/30 transition-smooth"
-            >
-              <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
-                <div className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  {format(new Date(entry.created_at), "MMM d, yyyy 'at' h:mm a")}
-                </div>
-                {entry.location && (
+          {entries.map((entry) => {
+            const isExpanded = expandedEntries.has(entry.id);
+            return (
+              <div
+                key={entry.id}
+                className="p-4 rounded-lg bg-accent/20 border border-border/30 hover:border-primary/30 transition-smooth cursor-pointer"
+                onClick={() => toggleEntry(entry.id)}
+              >
+                <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
                   <div className="flex items-center gap-1">
-                    <MapPin className="h-3 w-3" />
-                    {entry.location}
+                    <Clock className="h-3 w-3" />
+                    {format(new Date(entry.created_at), "MMM d, yyyy 'at' h:mm a")}
                   </div>
+                  {entry.location && (
+                    <div className="flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {entry.location}
+                    </div>
+                  )}
+                </div>
+                <p className={`text-sm text-foreground/90 leading-relaxed ${isExpanded ? '' : 'line-clamp-4'}`}>
+                  {entry.content}
+                </p>
+                {!isExpanded && entry.content.length > 200 && (
+                  <p className="text-xs text-primary mt-2">Click to read more...</p>
                 )}
               </div>
-              <p className="text-sm text-foreground/90 leading-relaxed line-clamp-4">
-                {entry.content}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </ScrollArea>
     </Card>
