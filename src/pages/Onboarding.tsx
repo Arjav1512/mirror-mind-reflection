@@ -7,6 +7,13 @@ import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
+import { z } from "zod";
+
+const onboardingSchema = z.object({
+  ageGroup: z.string().min(1, "Please select your age group"),
+  occupation: z.string().min(1, "Please enter your occupation").max(100, "Occupation must be less than 100 characters"),
+  goals: z.array(z.string()).min(1, "Please select at least one goal")
+});
 
 const Onboarding = () => {
   const [loading, setLoading] = useState(false);
@@ -59,27 +66,17 @@ const Onboarding = () => {
     e.preventDefault();
     setLoading(true);
 
-    if (!ageGroup) {
-      toast({
-        title: "Please select your age group",
-        variant: "destructive",
-      });
-      setLoading(false);
-      return;
-    }
+    const validation = onboardingSchema.safeParse({
+      ageGroup,
+      occupation: occupation.trim(),
+      goals
+    });
 
-    if (!occupation.trim()) {
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
       toast({
-        title: "Please enter your occupation",
-        variant: "destructive",
-      });
-      setLoading(false);
-      return;
-    }
-
-    if (goals.length === 0) {
-      toast({
-        title: "Please select at least one goal",
+        title: "Validation error",
+        description: firstError.message,
         variant: "destructive",
       });
       setLoading(false);

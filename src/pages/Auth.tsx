@@ -7,6 +7,12 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft } from "lucide-react";
+import { z } from "zod";
+
+const authSchema = z.object({
+  email: z.string().email("Please enter a valid email address").max(255, "Email must be less than 255 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters").max(128, "Password must be less than 128 characters")
+});
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -60,20 +66,12 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
 
-    if (!email || !email.includes("@")) {
+    const validation = authSchema.safeParse({ email, password });
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
       toast({
-        title: "Invalid email",
-        description: "Please enter a valid email address",
-        variant: "destructive",
-      });
-      setLoading(false);
-      return;
-    }
-
-    if (!password || password.length < 6) {
-      toast({
-        title: "Weak password",
-        description: "Password must be at least 6 characters",
+        title: "Validation error",
+        description: firstError.message,
         variant: "destructive",
       });
       setLoading(false);
@@ -115,6 +113,18 @@ const Auth = () => {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    const validation = authSchema.safeParse({ email, password });
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast({
+        title: "Validation error",
+        description: firstError.message,
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,

@@ -1,5 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+
+const requestSchema = z.object({
+  entryId: z.string().uuid("Invalid entry ID"),
+  content: z.string().min(1, "Content cannot be empty").max(10000, "Content must be less than 10,000 characters")
+});
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -10,14 +16,18 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    const { entryId, content } = await req.json();
+    const body = await req.json();
     
-    if (!entryId || !content) {
+    const validation = requestSchema.safeParse(body);
+    if (!validation.success) {
+      console.error("Validation error:", validation.error.errors);
       return new Response(
-        JSON.stringify({ error: "entryId and content are required" }),
+        JSON.stringify({ error: validation.error.errors[0].message }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    const { entryId, content } = validation.data;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {

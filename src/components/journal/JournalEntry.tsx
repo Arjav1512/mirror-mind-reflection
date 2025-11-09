@@ -6,6 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Send, MapPin } from "lucide-react";
+import { z } from "zod";
+
+const journalEntrySchema = z.object({
+  content: z.string().min(1, "Entry cannot be empty").max(10000, "Entry must be less than 10,000 characters"),
+  location: z.string().max(200, "Location must be less than 200 characters").optional()
+});
 
 interface JournalEntryProps {
   userId: string;
@@ -46,10 +52,16 @@ const JournalEntry = ({ userId }: JournalEntryProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!content.trim()) {
+    const validation = journalEntrySchema.safeParse({ 
+      content: content.trim(), 
+      location: location.trim() || undefined 
+    });
+    
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
       toast({
-        title: "Empty entry",
-        description: "Please write something first",
+        title: "Validation error",
+        description: firstError.message,
         variant: "destructive",
       });
       return;
@@ -138,10 +150,10 @@ const JournalEntry = ({ userId }: JournalEntryProps) => {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-4 border-t border-border/50">
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">
-              {content.length} characters
+              {content.length} / 10,000 characters
             </p>
             <p className="text-xs text-muted-foreground/70">
-              {content.length < 50 ? 'Write at least 50 characters for better insights' : 'Great! Ready to analyze'}
+              {content.length < 50 ? 'Write at least 50 characters for better insights' : content.length > 10000 ? 'Maximum length exceeded' : 'Great! Ready to analyze'}
             </p>
           </div>
           

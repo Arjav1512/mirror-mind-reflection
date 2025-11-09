@@ -1,5 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+
+const requestSchema = z.object({
+  weekStart: z.string().optional(),
+  weekEnd: z.string().optional()
+});
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -10,7 +16,18 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    let { weekStart, weekEnd } = await req.json();
+    const body = await req.json();
+    
+    const validation = requestSchema.safeParse(body);
+    if (!validation.success) {
+      console.error("Validation error:", validation.error.errors);
+      return new Response(
+        JSON.stringify({ error: validation.error.errors[0].message }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    let { weekStart, weekEnd } = validation.data;
     
     if (!weekStart || !weekEnd) {
       return new Response(
