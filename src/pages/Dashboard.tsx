@@ -21,6 +21,22 @@ const Dashboard = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    let isSubscribed = true;
+    
+    // Helper function to check onboarding status - prevents duplicate calls
+    const checkOnboarding = async (userId: string) => {
+      if (!isSubscribed) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("onboarding_completed")
+        .eq("id", userId)
+        .single();
+      
+      if (isSubscribed && !data?.onboarding_completed) {
+        navigate("/onboarding");
+      }
+    };
+
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
@@ -28,46 +44,30 @@ const Dashboard = () => {
       
       if (!session?.user) {
         navigate("/auth");
-      } else {
-        // Check if onboarding is completed
-        setTimeout(() => {
-          supabase
-            .from("profiles")
-            .select("onboarding_completed")
-            .eq("id", session.user.id)
-            .single()
-            .then(({ data }) => {
-              if (!data?.onboarding_completed) {
-                navigate("/onboarding");
-              }
-            });
-        }, 0);
+      } else if (event === "SIGNED_IN") {
+        // Only check onboarding on explicit sign-in to avoid duplicate checks
+        setTimeout(() => checkOnboarding(session.user.id), 0);
       }
     });
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!isSubscribed) return;
       setUser(session?.user ?? null);
       setLoading(false);
       
       if (!session?.user) {
         navigate("/auth");
       } else {
-        // Check if onboarding is completed
-        supabase
-          .from("profiles")
-          .select("onboarding_completed")
-          .eq("id", session.user.id)
-          .single()
-          .then(({ data }) => {
-            if (!data?.onboarding_completed) {
-              navigate("/onboarding");
-            }
-          });
+        // Check onboarding on initial load
+        checkOnboarding(session.user.id);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isSubscribed = false;
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   const handleSignOut = async () => {
