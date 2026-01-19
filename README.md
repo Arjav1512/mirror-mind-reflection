@@ -1,73 +1,104 @@
-# Welcome to your Lovable project
+# Mirror — Mind Reflection App
 
-## Project info
+**Mirror** is a **AI‑powered self‑reflection and journaling web app** designed to help users explore their thoughts, emotions, and inner patterns with intelligent guidance. Inspired by modern AI journaling tools that enhance self‑awareness through mood tracking, prompts, and insightful summaries, this project aims to bring that experience to the web in an intuitive and customizable interface.
 
-**URL**: https://lovable.dev/projects/db129762-8185-44d5-8a7d-bcf28e4897be
+✨ **Vision:**  
+*Help users build deeper self‑understanding and mental clarity by creating a digital space that acts like a mirror for the mind.*
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 📌 Features
 
-**Use Lovable**
+- 🧠 **AI‑Assisted Reflection**  
+  Use AI to analyze journal entries and surface patterns, emotional trends, and insights.
 
-Simply visit the [Lovable Project](https://usemirror.dev/) and start prompting.
+- ✍️ **Multi‑Format Journaling**  
+  Write text entries with prompts designed to deepen self‑reflection.
 
-Changes made via Lovable will be committed automatically to this repo.
+- 📊 **Mood Tracking**  
+  Log how you feel over time and visualize emotional patterns.
 
-**Use your preferred IDE**
+- 💻 **Web‑Native, Privacy‑Focused**  
+  Frontend built with modern web tools — designed to be expanded into a privacy‑first app.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🚀 Tech Stack
 
-Follow these steps:
+This project leverages modern web technologies for a fast and scalable experience:
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- **React** (UI)
+- **TypeScript** (Type safety & developer experience)
+- **Tailwind CSS** (Utility‑first styling)
+- **Vite** (Development tooling)
+- UI components (likely shadcn/ui)
+- Backend integration (e.g., Supabase folder present for auth/data)
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+--- 
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 📁 Repository Structure
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```text
+├── public/                # Static assets
+├── src/                   # Source code
+├── supabase/              # Backend auth & database configs
+├── .env                   # Environment configuration (secrets)
+├── index.html             # App entry HTML
+├── package.json           # Dependencies & scripts
+├── tsconfig.json          # TypeScript config
+├── tailwind.config.ts     # Tailwind config
+└── vite.config.ts         # Vite config
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🛠 Local Development
 
-**Use GitHub Codespaces**
+To get started locally:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. **Clone the repo:**
+   ```bash
+   git clone https://github.com/Arjav1512/mirror-mind-reflection.git
+   cd mirror-mind-reflection
+   ```
 
-## What technologies are used for this project?
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-This project is built with:
+3. **Start the dev server:**
+   ```bash
+   npm run dev
+   ```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+4. Open your browser to `http://localhost:5173` (or the logged dev URL).
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/db129762-8185-44d5-8a7d-bcf28e4897be) and click on Share -> Publish.
+## 🧠 Usage (Planned)
 
-## Can I connect a custom domain to my Lovable project?
+Once the core features are implemented, a typical user experience flow could be:
 
-Yes, you can!
+1. Create an account and log in.
+2. Enter a journal entry (text‑based, with optional AI guided input).
+3. Add mood/emotional context to the entry.
+4. Receive insight summaries based on your writing.
+5. Track changes over time through a dashboard.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+---
+
+## 🤝 Contributing
+
+This project is open to contributions! If you’d like to help:
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Open a pull request with a clear description.
+
+---
+
+## ❤️ About
+
+This project adapts the **Mirror** concept - an AI‑enhanced journaling tool that helps people reflect on thoughts and emotional patterns, uncovering insights about themselves through guided responses and pattern recognition.
